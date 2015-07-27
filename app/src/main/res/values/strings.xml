@@ -1,14 +1,37 @@
 <resources>
-    <string name="app_name">FinanceTime</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="app_name" translatable="false">FinanceTime</string>
+    <string name="title_activity_main" translatable="false">Finance Time</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
+    <string name="main">Main Page</string>
+    <string name="favorites">Favorites</string>
+    <string name="about" translatable="false">Info</string>
 
-
-<!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_page">The page Number is 1</string>
+    <string name="hello_world">Hello world!</string>
+
+    <string-array name="main_tabs">
+        <item>NEWS</item>
+        <item>INDICES</item>
+        <item>STOCKS</item>
+        <item>FOREX</item>
+        <item>COMMODITIES</item>
+    </string-array>
+
+    <string-array name="portfolio_tabs">
+        <item>INDICES</item>
+        <item>STOCKS</item>
+        <item>FOREX</item>
+        <item>COMMODITIES</item>
+    </string-array>
+
+    <string name="title_activity_info">InfoActivity</string>
+    <string name="first_row_info">This app has been realized by the Eclipse Group.</string>
+    <string name="second_row_inf">Greetings from: \n\t\t- Dorel Coman \n\t\t- Fulvio D\'Annibale \n\t\t- Andrea Petrucci</string>
+    <string name="title_info">Finance Time v. 0.5</string>
+    <string name="copy_row_info">© Eclipse Group 2015</string>
+
 </resources>

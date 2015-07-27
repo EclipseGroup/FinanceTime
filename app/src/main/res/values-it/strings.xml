@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_settings">Impostazioni</string>
+    <string name="drawer_close">Chiuso</string>
+    <string name="drawer_open">Aperto</string>
+
+    <string name="hello_blank_fragment">Buongiorno fragment</string>
+    <string name="hello_page">Pagina 1</string>
+    <string name="hello_world">Ciao ciao</string>
+
+    <string-array name="main_tabs">
+        <item>NOTIZIE</item>
+        <item>INDICI</item>
+        <item>AZIONI</item>
+        <item>FOREX</item>
+        <item>BENI</item>
+    </string-array>
+    <string name="favorites">Preferiti</string>
+    <string name="main">Pagina Principale</string>
+
+</resources>

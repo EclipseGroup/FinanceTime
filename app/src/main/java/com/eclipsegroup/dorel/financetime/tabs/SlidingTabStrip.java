@@ -1,4 +1,4 @@
-package com.example.dorel.financetime;
+package com.eclipsegroup.dorel.financetime.tabs;
 
 /*
  * Copyright 2014 Google Inc. All rights reserved.

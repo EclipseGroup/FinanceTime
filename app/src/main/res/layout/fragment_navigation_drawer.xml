@@ -1,16 +1,155 @@
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.dorel.financetime.NavigationDrawerFragment"
-    android:background="#EEE">
+    tools:context="com.eclipsegroup.dorel.financetime.NavigationDrawerFragment"
+    android:background="#FFF"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <include
+        android:id="@+id/header"
+        layout="@layout/navigation_drawer_header" />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:onClick="onClickMain"
+        android:id="@+id/main_row"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment"
-        android:textColor="#000"/>
+        android:layout_height="48dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@drawable/custom_bg"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        tools:context="materialtest.vivz.slidenerd.activities.ActivityRecylerAnimators">
 
-</RelativeLayout>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mainIcon"
+            android:paddingLeft="16dp"
+            android:src="@drawable/main"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#424242"
+            android:paddingLeft="20dp"
+            android:paddingTop="4dp"
+            android:textSize="14sp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/main"
+            android:id="@+id/mainText"
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:onClick="onClickFavorites"
+        android:id="@+id/favorites_row"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:clickable="true"
+        android:background="@drawable/custom_bg"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/favoritesIcon"
+            android:paddingLeft="16dp"
+            android:src="@drawable/favorites"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#424242"
+            android:paddingLeft="20dp"
+            android:textSize="14sp"
+            android:paddingTop="4dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/favorites"
+            android:id="@+id/favoritesText"
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:onClick="onClickSettings"
+        android:id="@+id/settings_row"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:clickable="true"
+        android:background="@drawable/custom_bg"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/settingsIcon"
+            android:paddingLeft="16dp"
+            android:src="@drawable/settings"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#424242"
+            android:paddingLeft="20dp"
+            android:paddingTop="4dp"
+            android:textSize="14sp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/action_settings"
+            android:id="@+id/settingsText"
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:onClick="onClickAbout"
+        android:id="@+id/about_row"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:clickable="true"
+        android:background="@drawable/custom_bg"
+        android:orientation="horizontal"
+        android:showDividers="end">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/aboutIcon"
+            android:paddingLeft="16dp"
+            android:src="@drawable/about"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#212121"
+            android:paddingLeft="20dp"
+            android:paddingTop="4dp"
+            android:textSize="14sp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/about"
+            android:id="@+id/aboutText"
+            android:layout_gravity="center_vertical" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/myMaterialDialog_lineView"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="center_horizontal"
+        android:background="#15000000"
+        android:gravity="center_horizontal"
+        android:visibility="gone" />
+
+</LinearLayout>

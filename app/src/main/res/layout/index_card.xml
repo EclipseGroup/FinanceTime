@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- A CardView that contains a TextView -->
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="105dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:background="#FFFF"
+        card_view:cardCornerRadius="2dp">
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFF"
+            android:paddingLeft="10dp"
+            android:id="@+id/relative_card">
+
+
+            <TextView
+                android:id="@+id/first_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:textStyle="bold"
+                android:textAllCaps="true"
+                android:background="#FFF"
+                android:text="GOOGL"
+                android:textColor="#000"
+                android:textSize="23dp"
+                android:paddingTop="2dp"
+                android:maxHeight="28dp" />
+
+            <TextView
+                android:id="@+id/second_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="Google Ltd"
+                android:textColor="@color/secondary_text_color"
+                android:textSize="16dp"
+                android:layout_below="@+id/first_text" />
+
+            <TextView
+                android:id="@+id/value_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:text="50.35"
+                android:textColor="@color/secondary_text_color"
+                android:textSize="27dp"
+                android:layout_alignParentBottom="true"
+                android:paddingBottom="2dp" />
+
+            <TextView
+                android:id="@+id/min_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Min  500.01"
+                android:textColor="@color/secondary_text_color"
+                android:textSize="14dp"
+                android:layout_alignParentBottom="false"
+                android:paddingBottom="2dp"
+                android:layout_alignParentRight="true"
+                android:layout_above="@+id/max_text"
+                android:paddingRight="10dp"
+                android:layout_alignLeft="@+id/max_text"
+                android:maxHeight="20dp" />
+
+            <TextView
+                android:id="@+id/max_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Max 520.35"
+                android:textColor="@color/secondary_text_color"
+                android:textSize="14dp"
+                android:layout_alignParentBottom="true"
+                android:paddingBottom="5dp"
+                android:layout_alignParentRight="true"
+                android:paddingRight="11dp" />
+            <TextView
+                android:id="@+id/growth_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+0.35"
+                android:textColor="@color/up_color"
+                android:textSize="18dp"
+                android:layout_centerHorizontal="true"
+                android:maxHeight="20dp"
+                android:layout_alignLeft="@+id/percent_growth_text"
+                android:layout_above="@+id/percent_growth_text" />
+
+            <TextView
+                android:id="@+id/percent_growth_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+0.45 %"
+                android:textColor="@color/up_color"
+                android:textSize="18dp"
+                android:paddingBottom="4dp"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:longClickable="false" />
+
+            <ImageButton
+                android:id="@+id/indices_star"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:background="#FFFF"
+                android:src="@drawable/ic_star_outline_grey600_36dp" />
+
+            <TextView
+                android:id="@+id/central_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NASDAQ"
+                android:textColor="#000"
+                android:textSize="14dp"
+                android:paddingBottom="2dp"
+                android:paddingRight="10dp"
+                android:maxHeight="20dp"
+                android:layout_above="@+id/second_text"
+                android:layout_alignLeft="@+id/growth_text"
+                android:layout_alignStart="@+id/growth_text" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

@@ -1,4 +1,4 @@
-package com.example.dorel.financetime;
+package com.eclipsegroup.dorel.financetime;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

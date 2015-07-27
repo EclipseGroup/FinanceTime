@@ -1,9 +1,10 @@
-package com.example.dorel.financetime;
+package com.eclipsegroup.dorel.financetime;
 
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,8 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class NavigationDrawerFragment extends Fragment {
-
-
 
     public static final String PREF_FILE_NAME = "stepref";
     public static final String KEY_USER_LEARNED_DRAWER ="user_learned_drawer";
@@ -54,17 +53,24 @@ public class NavigationDrawerFragment extends Fragment {
             @Override
             public void onDrawerOpened(View drawerView){
                 super.onDrawerOpened(drawerView);
+
                 if(mUserLearnedDrawer){
                     mUserLearnedDrawer = true;
                     saveToPreferences(getActivity(), KEY_USER_LEARNED_DRAWER, mUserLearnedDrawer+"");
                 }
-               getActivity().invalidateOptionsMenu();
+                getActivity().invalidateOptionsMenu();
+                super.onDrawerSlide(drawerView, 0);
             }
 
             @Override
             public void onDrawerClosed(View drawerView){
                 super.onDrawerClosed(drawerView);
                 getActivity().invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, 0); // this disables the animation
             }
 
         };
@@ -90,5 +96,17 @@ public class NavigationDrawerFragment extends Fragment {
     public static String readFromPreferences(Context context, String preferenceName, String defaultValue){
         SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(preferenceName, defaultValue);
+    }
+
+    public void closeDrawer(){
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    public void setAsUpNavigationIcon(){
+        mDrawerToggle.setDrawerIndicatorEnabled(false);
+    }
+
+    public void setAsHamNavigationIcon(){
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
     }
 }

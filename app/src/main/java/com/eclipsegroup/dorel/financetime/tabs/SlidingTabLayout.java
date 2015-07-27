@@ -1,4 +1,4 @@
-package com.example.dorel.financetime;
+package com.eclipsegroup.dorel.financetime.tabs;
 
 /*
  * Copyright 2014 Google Inc. All rights reserved.
@@ -18,17 +18,19 @@ package com.example.dorel.financetime;
 
 
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -64,8 +66,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
     }
 
     private static final int TITLE_OFFSET_DIPS = 24;
-    private static final int TAB_VIEW_PADDING_DIPS = 16;
-    private static final int TAB_VIEW_TEXT_SIZE_SP = 12;
+    private static final int TAB_VIEW_PADDING_DIPS = 15; /*TODO: Change padding between text */
+    private static final int TAB_VIEW_TEXT_SIZE_SP = 14; /*TODO: change size of text */
 
     private int mTitleOffset;
 
@@ -165,7 +167,9 @@ public class SlidingTabLayout extends HorizontalScrollView {
      * {@link #setCustomTabView(int, int)}.
      */
     protected TextView createDefaultTabView(Context context) {
+
         TextView textView = new TextView(context);
+
         textView.setGravity(Gravity.CENTER);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, TAB_VIEW_TEXT_SIZE_SP);
         textView.setTypeface(Typeface.DEFAULT_BOLD);
