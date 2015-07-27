@@ -122,7 +122,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
-                android:background="#FFFF"
+                android:background="@color/white"
                 android:src="@drawable/ic_star_outline_grey600_36dp" />
 
             <TextView

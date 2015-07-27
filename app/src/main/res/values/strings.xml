@@ -33,5 +33,6 @@
     <string name="second_row_inf">Greetings from: \n\t\t- Dorel Coman \n\t\t- Fulvio D\'Annibale \n\t\t- Andrea Petrucci</string>
     <string name="title_info">Finance Time v. 0.5</string>
     <string name="copy_row_info">© Eclipse Group 2015</string>
+    <string name="title_activity_graphic">GraphicActivity</string>
 
 </resources>
