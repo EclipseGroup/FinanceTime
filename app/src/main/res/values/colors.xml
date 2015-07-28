@@ -6,6 +6,8 @@
     <color name="colorPrimaryText">#FFF</color>
     <color name="colorHighlight">#B6B6B6</color>
     <color name="indices_background_color">#E0E0E0</color>
+
+    <color name="primary_text_color">#212121</color>
     <color name="secondary_text_color">#727272</color>
     <color name="up_color">#4CAF50</color>
     <color name="down_color">#D50000</color>

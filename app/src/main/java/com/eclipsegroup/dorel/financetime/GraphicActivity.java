@@ -5,25 +5,30 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.eclipsegroup.dorel.financetime.R;
+import com.eclipsegroup.dorel.financetime.models.Graph;
 
 public class GraphicActivity extends AppCompatActivity{
 
     private Toolbar toolbar;
+    private Graph graph;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graphic);
+        graph = new Graph(getIntent().getExtras().getString("INDEX_SYMBOL"));
 
-        toolbar = (Toolbar)findViewById(R.id.app_bar);
+        toolbar = (Toolbar)findViewById(R.id.graphic_bar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setTitle("Questo è un grafico");
+        getSupportActionBar().setTitle(graph.getName().toUpperCase());
+
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener(){
 

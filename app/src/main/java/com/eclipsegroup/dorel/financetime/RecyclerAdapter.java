@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,13 +52,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
         holder.centralName.setText(current.centralName);
         holder.max.setText("Max " + current.max.toString());
         holder.min.setText("Min  " + current.min.toString());
-        holder.cardLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, GraphicActivity.class);
-                context.startActivity(intent);
-            }
-        });
+
+        /* Start the graph activity on click */
+        holder.cardLayout.setOnClickListener(new CardListner(holder));
 
         if(holder.favorite == 1){
             holder.star.setImageResource(R.drawable.ic_star_grey600_36dp);
@@ -67,6 +64,22 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
         holder.star.setOnClickListener(new StarListner(holder));
 
+    }
+
+    public class CardListner implements View.OnClickListener{
+
+        RecyclerViewHolder holder;
+
+        public CardListner(RecyclerViewHolder holder){
+            this.holder = holder;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(context, GraphicActivity.class);
+            intent.putExtra("INDEX_SYMBOL", holder.firstName.getText().toString());
+            context.startActivity(intent);
+        }
     }
 
     public class StarListner implements View.OnClickListener{

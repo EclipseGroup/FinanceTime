@@ -1,25 +1,90 @@
-<LinearLayout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.eclipsegroup.dorel.financetime.MainActivity">
+    tools:context="com.eclipsegroup.dorel.financetime.MainActivity"
+    android:background="@color/white"
+    android:paddingBottom="16dp">
 
-        <!-- Toolbar -->
-        <android.support.v7.widget.Toolbar
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/app_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/primaryColor" />
+    <!-- Toolbar -->
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/graphic_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/primaryColor" />
 
-        <!-- Frame of all fragments -->
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/graphic_layout">
-        </FrameLayout>
+    <!-- Frame of all fragments -->
+    <FrameLayout
+        android:id="@+id/graphic_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_above="@+id/indices_star"
+        android:layout_below="@+id/app_bar"></FrameLayout>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/header_start_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_marginLeft="4dp"
+        android:text="@string/start_period"
+        android:textColor="@color/secondary_text_color"
+        android:layout_alignLeft="@+id/start_date"
+        android:layout_above="@+id/start_date" />
+
+    <TextView
+        android:id="@+id/start_date"
+        style="@android:style/Widget.Holo.Light.Spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="false"
+        android:text="35 feb 2015   "
+        android:textColor="@color/primary_text_color"
+        android:textSize="20sp"
+        android:layout_marginLeft="16dp"/>
+
+    <TextView
+        android:id="@+id/header_end_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/end_date"
+        android:layout_alignLeft="@+id/end_date"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="4dp"
+        android:paddingTop="16dp"
+        android:text="@string/end_period"
+        android:textColor="@color/secondary_text_color" />
+
+    <TextView
+        android:id="@+id/end_date"
+        style="@android:style/Widget.Holo.Light.Spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentRight="true"
+        android:text="35 feb 2015   "
+        android:textColor="@color/primary_text_color"
+        android:textSize="20sp"
+        android:layout_marginRight="16dp"/>
+
+
+    <ImageButton
+        android:id="@+id/indices_star"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentTop="false"
+        android:background="@color/white"
+        android:src="@drawable/ic_star_outline_grey600_36dp"
+        android:layout_above="@+id/header_end_date"
+        android:layout_alignRight="@+id/end_date" />
+
+</RelativeLayout>
 

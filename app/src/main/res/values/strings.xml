@@ -35,4 +35,7 @@
     <string name="copy_row_info">© Eclipse Group 2015</string>
     <string name="title_activity_graphic">GraphicActivity</string>
 
+    <string name="start_period">FROM</string>
+    <string name="end_period">TO</string>
+
 </resources>

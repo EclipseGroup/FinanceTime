@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setTitle(R.string.main);
+        getSupportActionBar().setTitle(R.string.main);
+
 
         mainPageFragment = new MainPageFragment();
         portfolioFragment = new PortfolioFragment();

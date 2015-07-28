@@ -84,8 +84,6 @@ public class PageFragment extends Fragment {
         PageFragment pageFragment = new PageFragment();
         pageFragment.fragmentType = position;
 
-        Log.d(TAG, "new one" + Integer.toString(position));
-
         return pageFragment;
     }
 }
