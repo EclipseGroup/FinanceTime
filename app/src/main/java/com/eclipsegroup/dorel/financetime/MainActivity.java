@@ -14,17 +14,17 @@ import com.eclipsegroup.dorel.financetime.main.fragments.InfoFragment;
 import com.eclipsegroup.dorel.financetime.main.fragments.MainPageFragment;
 import com.eclipsegroup.dorel.financetime.main.fragments.PortfolioFragment;
 import com.eclipsegroup.dorel.financetime.main.fragments.SettingsFragment;
+import com.eclipsegroup.dorel.financetime.models.IndicesData;
 import com.eclipsegroup.dorel.financetime.tabs.SlidingTabLayout;
 
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private ViewPager mPager;
-    private SlidingTabLayout mTabs;
     private NavigationDrawerFragment drawerFragment;
+    private FragmentTransaction transaction;
     private MainPageFragment mainPageFragment;
     private PortfolioFragment portfolioFragment;
-    private FragmentTransaction transaction;
+    private IndicesData indicesData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.main);
-
 
         mainPageFragment = new MainPageFragment();
         portfolioFragment = new PortfolioFragment();
@@ -53,9 +52,6 @@ public class MainActivity extends AppCompatActivity {
     public void onClickMain(View view){
         toolbar.setTitle(R.string.main);
 
-       /* Bundle args = new Bundle();
-        args.putInt(ArticleFragment.ARG_POSITION, position);
-        newFragment.setArguments(args); */
         transactionTo(mainPageFragment);
         drawerFragment.setAsHamNavigationIcon();
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -73,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     public void onClickFavorites(View view){
 
         toolbar.setTitle(R.string.favorites);
+
         transactionTo(portfolioFragment);
         drawerFragment.setAsHamNavigationIcon();
         toolbar.setNavigationOnClickListener(new View.OnClickListener(){

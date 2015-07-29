@@ -2,6 +2,7 @@ package com.eclipsegroup.dorel.financetime;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.support.v7.widget.RecyclerView;
@@ -25,11 +26,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     private LayoutInflater inflater;
     List<Index> data = Collections.emptyList();
     private Context context;
+    private SharedPreferences favorites;
+
 
     public RecyclerAdapter(Context context, List<Index> data){
         this.context = context;
         inflater = LayoutInflater.from(context);
         this.data = data;
+        favorites = context.getSharedPreferences("favorites", Context.MODE_PRIVATE);
     }
 
     @Override
@@ -46,22 +50,24 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
         Index current = data.get(position); /* TODO: get element */
 
-        holder.favorite = 0;            /* TODO: set element */
+        if (favorites.getBoolean(current.firstName, false)){
+            holder.favorite = 1;
+            holder.star.setImageResource(R.drawable.ic_star_grey600_36dp);
+        }
+
+        else{
+            holder.favorite = 0;
+            holder.star.setImageResource(R.drawable.ic_star_outline_grey600_36dp);
+        }
+
         holder.firstName.setText(current.firstName);
         holder.secondName.setText(current.secondName);
         holder.centralName.setText(current.centralName);
-        holder.max.setText("Max " + current.max.toString());
-        holder.min.setText("Min  " + current.min.toString());
+        holder.max.setText("Max " + current.max);
+        holder.min.setText("Min  " + current.min);
 
         /* Start the graph activity on click */
         holder.cardLayout.setOnClickListener(new CardListner(holder));
-
-        if(holder.favorite == 1){
-            holder.star.setImageResource(R.drawable.ic_star_grey600_36dp);
-        }
-        else
-            holder.star.setImageResource(R.drawable.ic_star_outline_grey600_36dp);
-
         holder.star.setOnClickListener(new StarListner(holder));
 
     }
@@ -93,13 +99,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
         @Override
         public void onClick(View v) {
             ImageButton button = (ImageButton)v;
+            SharedPreferences.Editor edit = favorites.edit();
+
             if (holder.favorite == 1){
                 button.setImageResource(R.drawable.ic_star_outline_grey600_36dp);
                 holder.favorite = 0;
+                edit.remove(holder.firstName.getText().toString());
+                edit.commit();
             }
             else{
                 button.setImageResource(R.drawable.ic_star_grey600_36dp);
                 holder.favorite = 1;
+                edit.putBoolean(holder.firstName.getText().toString(), true);
+                edit.commit();
             }
         }
     }
