@@ -1,5 +1,6 @@
 package com.eclipsegroup.dorel.financetime;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -10,12 +11,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.View;
 
+import com.eclipsegroup.dorel.financetime.database.Database;
+import com.eclipsegroup.dorel.financetime.database.DatabaseHelper;
 import com.eclipsegroup.dorel.financetime.main.fragments.InfoFragment;
 import com.eclipsegroup.dorel.financetime.main.fragments.MainPageFragment;
 import com.eclipsegroup.dorel.financetime.main.fragments.PortfolioFragment;
 import com.eclipsegroup.dorel.financetime.main.fragments.SettingsFragment;
 import com.eclipsegroup.dorel.financetime.models.IndicesData;
 import com.eclipsegroup.dorel.financetime.tabs.SlidingTabLayout;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,11 +30,25 @@ public class MainActivity extends AppCompatActivity {
     private MainPageFragment mainPageFragment;
     private PortfolioFragment portfolioFragment;
     private IndicesData indicesData;
+    private DatabaseHelper dbHelper;
+    private Database db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dbHelper = new DatabaseHelper(this);
+
+      /*  if(dbHelper.created) {
+            try {
+                dbHelper.copyDataBase();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } */
+
+        db = new Database(dbHelper);
 
         toolbar = (Toolbar)findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.eclipsegroup.dorel.financetime.database.Database;
+import com.eclipsegroup.dorel.financetime.database.DatabaseHelper;
 import com.eclipsegroup.dorel.financetime.models.Index;
 
 import java.util.Collections;
@@ -26,14 +29,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     private LayoutInflater inflater;
     List<Index> data = Collections.emptyList();
     private Context context;
-    private SharedPreferences favorites;
+    private DatabaseHelper dbHelper;
+    private Database db;
 
 
     public RecyclerAdapter(Context context, List<Index> data){
         this.context = context;
         inflater = LayoutInflater.from(context);
         this.data = data;
-        favorites = context.getSharedPreferences("favorites", Context.MODE_PRIVATE);
+        dbHelper = new DatabaseHelper(context);
+        db = new Database(dbHelper);
     }
 
     @Override
@@ -50,7 +55,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
         Index current = data.get(position); /* TODO: get element */
 
-        if (favorites.getBoolean(current.firstName, false)){
+        if (db.isFavorite(current.firstName)){
             holder.favorite = 1;
             holder.star.setImageResource(R.drawable.ic_star_grey600_36dp);
         }
@@ -63,8 +68,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
         holder.firstName.setText(current.firstName);
         holder.secondName.setText(current.secondName);
         holder.centralName.setText(current.centralName);
+        holder.currentValue.setText(current.value);
         holder.max.setText("Max " + current.max);
         holder.min.setText("Min  " + current.min);
+        holder.pageType = position;
 
         /* Start the graph activity on click */
         holder.cardLayout.setOnClickListener(new CardListner(holder));
@@ -99,19 +106,30 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
         @Override
         public void onClick(View v) {
             ImageButton button = (ImageButton)v;
-            SharedPreferences.Editor edit = favorites.edit();
+            String type = "";
+
+            if(holder.pageType == 1)
+                type = "indices";
+
+            else if(holder.pageType == 2)
+                type = "stocks";
+
+            else if(holder.pageType == 3)
+                type = "forex";
+
+            else if (holder.pageType == 4)
+                type = "commodities";
 
             if (holder.favorite == 1){
                 button.setImageResource(R.drawable.ic_star_outline_grey600_36dp);
                 holder.favorite = 0;
-                edit.remove(holder.firstName.getText().toString());
-                edit.commit();
+                db.deleteFavorite(holder.firstName.getText().toString());
             }
             else{
                 button.setImageResource(R.drawable.ic_star_grey600_36dp);
                 holder.favorite = 1;
-                edit.putBoolean(holder.firstName.getText().toString(), true);
-                edit.commit();
+                db.insertFavorite(holder.firstName.getText().toString(),
+                        type, holder.secondName.getText().toString());
             }
         }
     }
@@ -128,9 +146,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
         TextView firstName;
         TextView secondName;
         TextView centralName;
+        TextView currentValue;
         TextView max;
         TextView min;
         Integer favorite;
+        Integer pageType;
 
         public RecyclerViewHolder(View itemView) {
             super(itemView);
@@ -140,6 +160,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
             centralName = (TextView) itemView.findViewById(R.id.central_text);
             max = (TextView) itemView.findViewById(R.id.max_text);
             min = (TextView) itemView.findViewById(R.id.min_text);
+            currentValue = (TextView) itemView.findViewById(R.id.value_text);
             cardLayout = (RelativeLayout) itemView.findViewById(R.id.relative_card);
             star = (ImageButton) itemView.findViewById(R.id.indices_star);
         }
