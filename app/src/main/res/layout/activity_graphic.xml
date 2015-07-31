@@ -1,11 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.eclipsegroup.dorel.financetime.MainActivity"
-    android:background="@color/white"
-    android:paddingBottom="16dp">
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".GraphicActivity">
 
     <!-- Toolbar -->
     <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,13 +14,14 @@
         android:background="@color/primaryColor" />
 
     <!-- Frame of all fragments -->
-    <FrameLayout
+    <com.jjoe64.graphview.GraphView
+
         android:id="@+id/graphic_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:layout_above="@+id/indices_star"
-        android:layout_below="@+id/app_bar"></FrameLayout>
+        android:layout_below="@+id/graphic_bar"/>
 
     <TextView
         android:id="@+id/header_start_date"
