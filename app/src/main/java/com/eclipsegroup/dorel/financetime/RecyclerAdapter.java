@@ -70,7 +70,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
         holder.currentValue.setText(current.value);
         holder.max.setText("Max " + current.max);
         holder.min.setText("Min  " + current.min);
-        holder.currentValue.setText(current.value);
+        holder.growth.setText(current.growth);
+
+        holder.percent_growth.setText(current.percent_growth);
+        if (current.color == 0){
+            holder.growth.setTextColor(context.getResources().getColor(R.color.down_color));
+            holder.percent_growth.setTextColor(context.getResources().getColor(R.color.down_color));
+        }
+        else{
+            holder.growth.setTextColor(context.getResources().getColor(R.color.up_color));
+            holder.percent_growth.setTextColor(context.getResources().getColor(R.color.up_color));
+        }
+
+
         holder.pageType = position;
 
         /* Start the graph activity on click */
@@ -151,6 +163,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
         TextView min;
         Integer favorite;
         Integer pageType;
+        TextView growth;
+        TextView percent_growth;
 
         public RecyclerViewHolder(View itemView) {
             super(itemView);
@@ -163,6 +177,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
             currentValue = (TextView) itemView.findViewById(R.id.value_text);
             cardLayout = (RelativeLayout) itemView.findViewById(R.id.relative_card);
             star = (ImageButton) itemView.findViewById(R.id.indices_star);
+            growth = (TextView) itemView.findViewById(R.id.growth_text);
+            percent_growth = (TextView) itemView.findViewById(R.id.percent_growth_text);
         }
     }
 }
