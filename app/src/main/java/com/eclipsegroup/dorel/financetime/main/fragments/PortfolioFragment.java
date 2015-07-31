@@ -53,7 +53,7 @@ public class PortfolioFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            return PageFragment.getInstance(position, 1);
+            return PageFragment.getInstance(position, 1, getActivity());
         }
 
         @Override

@@ -52,7 +52,7 @@ public class MainPageFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            return PageFragment.getInstance(position, 0);
+            return PageFragment.getInstance(position, 0, getActivity());
         }
 
         @Override

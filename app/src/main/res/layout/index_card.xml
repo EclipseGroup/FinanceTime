@@ -129,7 +129,7 @@
                 android:id="@+id/central_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="NASDAQ"
+                android:text=""
                 android:textColor="#000"
                 android:textSize="14dp"
                 android:paddingBottom="2dp"
