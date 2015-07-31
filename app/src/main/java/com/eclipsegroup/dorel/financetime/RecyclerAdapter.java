@@ -67,10 +67,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
         holder.firstName.setText(current.firstName);
         holder.secondName.setText(current.secondName);
-        holder.centralName.setText(current.centralName);
         holder.currentValue.setText(current.value);
         holder.max.setText("Max " + current.max);
         holder.min.setText("Min  " + current.min);
+        holder.currentValue.setText(current.value);
         holder.pageType = position;
 
         /* Start the graph activity on click */
