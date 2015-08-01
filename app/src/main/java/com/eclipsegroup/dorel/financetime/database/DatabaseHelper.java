@@ -1,7 +1,6 @@
 package com.eclipsegroup.dorel.financetime.database;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -16,29 +15,26 @@ import java.io.OutputStream;
 public class DatabaseHelper extends SQLiteOpenHelper{
 
     public static final String DATABASE_NAME = "financetimedb";
-    public static final String TABLE_NAME = "FAVORITE_TABLE";
+    public static final String FAVORITE_TABLE = "FAVORITE_TABLE";
+    public static final String MAIN_TABLE = "MAIN_TABLE";
     public static final String UID = "_id";
     public static final String SYMBOL = "Symbol";
     public static final String TYPE = "Type";
     public static final String NAME = "Name";
-    private static final String TABLE_CREATE = "CREATE TABLE " + TABLE_NAME +
+    private static final String TABLE_CREATE = "CREATE TABLE " + FAVORITE_TABLE +
             " (" + UID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
             " Symbol VARCHAR(255), Type VARCHAR(255), Name VARCHAR(255));";
     private static final int DATABASE_VERSION = 3;
     public Context context;
-    public Boolean created = false;
 
 
     public DatabaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context =  context;
-
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
-        created = true;
 
         try{
             db.execSQL(TABLE_CREATE);
@@ -50,9 +46,6 @@ public class DatabaseHelper extends SQLiteOpenHelper{
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-        created = true;
-        Toast.makeText(context, "onUpgrade", Toast.LENGTH_SHORT).show();
 
         try{
             db.execSQL(TABLE_CREATE);

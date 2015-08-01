@@ -18,6 +18,7 @@ public class PortfolioFragment extends Fragment {
 
     private ViewPager mPager = null;
     private SlidingTabLayout mTabs;
+    private static final Integer FAVORITES = 1;
 
     public PortfolioFragment() {
         // Required empty public constructor
@@ -53,7 +54,7 @@ public class PortfolioFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            return PageFragment.getInstance(position, 1, getActivity());
+            return PageFragment.getInstance(position, FAVORITES, getActivity());
         }
 
         @Override

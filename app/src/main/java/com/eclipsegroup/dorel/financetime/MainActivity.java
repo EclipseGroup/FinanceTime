@@ -39,15 +39,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         dbHelper = new DatabaseHelper(this);
-
-      /*  if(dbHelper.created) {
-            try {
-                dbHelper.copyDataBase();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } */
-
         db = new Database(dbHelper);
 
         toolbar = (Toolbar)findViewById(R.id.app_bar);

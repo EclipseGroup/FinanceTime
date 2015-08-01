@@ -42,8 +42,11 @@ public class Index {
         double pr;
         double var;
         String variation;
-        if (open.equals("null"))
+        if (open.equals("null")){
             variation = "No Data";
+            color = 1;
+        }
+
         else {
             op = Double.parseDouble(open);
             pr = Double.parseDouble(price);
@@ -67,7 +70,7 @@ public class Index {
         double var;
         double varPerc;
         String perc ;
-        if (variation.equals("null"))
+        if (variation.equals("null") || open.equals("null"))
             perc = "( No Data )";
         else {
             op = Double.parseDouble(open);

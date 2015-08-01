@@ -12,10 +12,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 public class NavigationDrawerFragment extends Fragment {
 
-    public static final String PREF_FILE_NAME = "stepref";
+    public static final String PREF_FILE_NAME = "pref";
     public static final String KEY_USER_LEARNED_DRAWER ="user_learned_drawer";
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
@@ -31,7 +32,8 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstancesState){
         super.onCreate(savedInstancesState);
-        mUserLearnedDrawer = Boolean.getBoolean(readFromPreferences(getActivity(),KEY_USER_LEARNED_DRAWER, "false"));
+        mUserLearnedDrawer = Boolean.valueOf(readFromPreferences(getActivity(),KEY_USER_LEARNED_DRAWER, "false"));
+
         if(savedInstancesState != null){
             mFromSavedInstanceState = true;
         }
@@ -54,7 +56,7 @@ public class NavigationDrawerFragment extends Fragment {
             public void onDrawerOpened(View drawerView){
                 super.onDrawerOpened(drawerView);
 
-                if(mUserLearnedDrawer){
+                if(!mUserLearnedDrawer){
                     mUserLearnedDrawer = true;
                     saveToPreferences(getActivity(), KEY_USER_LEARNED_DRAWER, mUserLearnedDrawer+"");
                 }

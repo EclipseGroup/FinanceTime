@@ -1,21 +1,14 @@
 package com.eclipsegroup.dorel.financetime;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
-import com.eclipsegroup.dorel.financetime.R;
 import com.eclipsegroup.dorel.financetime.models.Graph;
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.LegendRenderer;
-import com.jjoe64.graphview.Viewport;
+
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -53,7 +46,6 @@ public class GraphicActivity extends AppCompatActivity {
                 startActivity(openMainActivity);
             }
         });
-
 
         GraphView graph = (GraphView) findViewById(id.graphic_layout);
         //graph.getGridLabelRenderer().setGridColor(color.accentColor);

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +17,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.eclipsegroup.dorel.financetime.database.Database;
+import com.eclipsegroup.dorel.financetime.database.DatabaseHelper;
 import com.eclipsegroup.dorel.financetime.models.Index;
 
 import java.util.ArrayList;
@@ -34,6 +37,7 @@ public class PageFragment extends Fragment implements FinanceServiceCallback{
     private static final int STOCKS = 2;
     private static final int FOREX = 3;
     private static final int COMMODITIES = 4;
+
     private static final int MAIN_PAGE = 0;
     private static final int FAVORITES = 1;
 
@@ -44,47 +48,36 @@ public class PageFragment extends Fragment implements FinanceServiceCallback{
     private Integer fragmentType;
     private Context context;
     private ProgressBar progressBar;
+    private DatabaseHelper dbHelper;
+    private Database db;
+    private ArrayList<String> symbols;
 
     Index current;
     ArrayList<Index> data = new ArrayList<Index>();
     private YahooFinanceService service;
-    private String [] stocksSymbols = {"GOOG", "YHOO","TWTR","CFG", "BAC", "F", "FB", "AAPL",
-            "T","FNC.MI", "UCG.MI", "UCG.MI", "ENI.MI", "AMZN" };
     int conta = 0;
 
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        dbHelper = new DatabaseHelper(context);
+        db = new Database(dbHelper);
+        symbols = db.getListType(pageType, fragmentType);
+        service = new YahooFinanceService(this, getActivity());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState){
 
 
-        String [] indicesSymbols = {"NASDAQ", "Dow Jones", };
+        if(symbols != null && data.isEmpty())
+            for(Integer i=0; i < symbols.size(); i++){
 
-        String [] forexSymbols = {"EURUSD=X", "GBPEUR=X", "USDJPY=X", "GBPUSD=X",
-                "USDCNY=X", "EURJPY=X", };
-        service = new YahooFinanceService(this, getActivity());
-
-        if(pageType == STOCKS){
-            data.clear();
-            for(Integer i=0; i < stocksSymbols.length; i++){
-
-                /* (symbolName, secondName, indexName se c'è se no lascia cosi per ora,
-                         currentValue, min, max, growth, percent_growth)  */
-                service.refreshQuote(stocksSymbols[i]);
+               // Toast.makeText(context, "STOCKS" + Integer.toString(i), Toast.LENGTH_SHORT).show();
+                service.refreshQuote(symbols.get(i));
             }
-
-        }
-
-        else{
-            String[] titles ={"jack", "isss", "under", "the"};
-            for(Integer i=0; i < titles.length; i++){
-                current = Index.setNewIndex(titles[i], "Google InC", "4",
-                        "2.0", "32.0", "232.0");
-                data.add(current);
-            }
-
-        }
-
 
         View layout;
 
@@ -97,7 +90,7 @@ public class PageFragment extends Fragment implements FinanceServiceCallback{
             layout = inflater.inflate(R.layout.fragment_indices, container, false);
             recyclerView = (RecyclerView) layout.findViewById(R.id.indices_recycler);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity())); /* you want a linear display */
-            recyclerAdapter = new RecyclerAdapter(getActivity(), data);
+            recyclerAdapter = new RecyclerAdapter(getActivity(), data, pageType, fragmentType);
             recyclerView.setAdapter(recyclerAdapter);
 
         }
@@ -105,7 +98,7 @@ public class PageFragment extends Fragment implements FinanceServiceCallback{
             layout = inflater.inflate(R.layout.fragment_indices, container, false);
             recyclerView = (RecyclerView) layout.findViewById(R.id.indices_recycler);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity())); /* you want a linear display */
-            recyclerAdapter = new RecyclerAdapter(getActivity(), data);
+            recyclerAdapter = new RecyclerAdapter(getActivity(), data, pageType, fragmentType);
             recyclerView.setAdapter(recyclerAdapter);
         }
 
@@ -118,7 +111,6 @@ public class PageFragment extends Fragment implements FinanceServiceCallback{
         return layout;
     }
 
-
     public List<Index> getData(){
 
         return data;
@@ -126,13 +118,10 @@ public class PageFragment extends Fragment implements FinanceServiceCallback{
 
     public static PageFragment getInstance(int position, int fragmentType, Context context){
 
-        /* TODO: Control what you return, here you choose the page */
-
         PageFragment pageFragment = new PageFragment();
         pageFragment.pageType = position;
         pageFragment.fragmentType = fragmentType;
         pageFragment.context = context;
-        Toast.makeText(context, "creo pos " + Integer.toString(position), Toast.LENGTH_SHORT).show();
 
         return pageFragment;
     }
@@ -145,8 +134,8 @@ public class PageFragment extends Fragment implements FinanceServiceCallback{
         data.add(current);
        // Toast.makeText(getActivity(), "CIAO " + Integer.toString(conta)+ quote.getSymbol() + quote.getName() , Toast.LENGTH_SHORT).show();
         conta++;
-        if (conta == stocksSymbols.length){
-            recyclerAdapter = new RecyclerAdapter(getActivity(), data);
+        if (conta == symbols.size()){
+            recyclerAdapter = new RecyclerAdapter(getActivity(), data, pageType, fragmentType);
             recyclerView.setAdapter(recyclerAdapter);
             conta = 0;
             progressBar.setVisibility(View.INVISIBLE);
