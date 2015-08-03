@@ -19,6 +19,7 @@ import com.eclipsegroup.dorel.financetime.database.Database;
 import com.eclipsegroup.dorel.financetime.database.DatabaseHelper;
 import com.eclipsegroup.dorel.financetime.models.Index;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,6 +34,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     private Database db;
     private Integer pageType;
     private Integer fragmentType;
+    private ArrayList<String> symbols;
+
 
     public RecyclerAdapter(Context context, List<Index> data, Integer pageType, Integer fragmentType){
         this.context = context;
@@ -57,7 +60,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
     @Override
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
-        /* We set data into it for each element */
 
         Index current = data.get(position);
 
@@ -100,6 +102,21 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     public int getItemCount() {
         return data.size();
     }
+
+
+    public void setOnItemRemoved(ArrayList<String> symbols){
+        this.symbols = symbols;
+    }
+
+    void onItemRemoved(){
+        if (fragmentType == 1 ){
+            symbols.clear();
+            ArrayList<String> list = db.getListType(pageType, fragmentType);
+            if (list != null)
+                symbols.addAll(list);
+        }
+    }
+
 
     class RecyclerViewHolder extends RecyclerView.ViewHolder{
 
@@ -171,6 +188,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                 if(fragmentType == 1){
                     data.remove(holder.getLayoutPosition());
                     notifyItemRemoved(holder.getLayoutPosition());
+                    onItemRemoved();
                 }
 
             }

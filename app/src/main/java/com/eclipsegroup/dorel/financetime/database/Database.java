@@ -90,7 +90,7 @@ public class Database{
             cursor = db.query(DatabaseHelper.FAVORITE_TABLE, columns, selection, null, null, null, null);
 
         if (!cursor.moveToFirst())
-            return null;
+            return list;
 
         int symbolIndex = cursor.getColumnIndex(DatabaseHelper.SYMBOL);
 
