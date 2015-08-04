@@ -79,7 +79,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onRestart(){
+    protected void onResume(){
+        super.onResume();
         searchView.setIconified(true);
     }
 

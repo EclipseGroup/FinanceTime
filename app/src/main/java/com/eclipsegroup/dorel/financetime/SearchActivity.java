@@ -48,73 +48,18 @@ public class SearchActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerAdapter recyclerAdapter;
     private ArrayList<Index> data = new ArrayList<>();
-    private Handler handler;
+    private HandleAsynkTask handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        handler = new HandleAsynkTask();
 
         query = getIntent().getExtras().getString("SEARCH_STRING");
 
-        handler = new Handler(){
-            @Override
-            public void handleMessage(Message msg){
-
-                String str = msg.getData().getString("myKey");
-                if (str != null){
-                    if(str.compareTo("BAD") == 0){
-                        progressBar.setVisibility(View.INVISIBLE);
-                    }
-                    Toast.makeText(SearchActivity.this, str , Toast.LENGTH_SHORT).show();
-                }
-
-                if(msg.getData().getString("SEARCH_DONE") != null){
-                    progressBar.setVisibility(View.INVISIBLE);
-
-                    if (data.size() != 0){
-                        recyclerAdapter = new RecyclerAdapter(SearchActivity.this, data);
-                        recyclerView.setAdapter(recyclerAdapter);
-                    }
-                    else
-                        Toast.makeText(SearchActivity.this, "No result found", Toast.LENGTH_LONG).show();
-                }
-            }
-        };
-
-        toolbar = (Toolbar)findViewById(R.id.search_app_bar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent openMainActivity = new Intent(SearchActivity.this, MainActivity.class);
-                openMainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(openMainActivity);
-            }
-        });
-
-        searchView = (SearchView) findViewById(R.id.search_space_activity);
-        searchView.setQuery(query, true);
-        searchView.setIconified(false);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                progressBar.setVisibility(View.VISIBLE);
-                data.clear();
-                Search search = new Search();
-                search.execute(query);
-
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-
+        setToolbar();
+        setSearchView();
 
         progressBar = (ProgressBar) findViewById(R.id.progress_search);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.primaryColor),
@@ -126,7 +71,6 @@ public class SearchActivity extends AppCompatActivity {
 
         Search search = new Search();
         search.execute(query);
-
     }
 
     private void sendMessage(String string){
@@ -145,6 +89,8 @@ public class SearchActivity extends AppCompatActivity {
         handler.sendMessage(msg);
 
     }
+
+
 
     class Search extends AsyncTask<String, String, String>{
 
@@ -177,7 +123,6 @@ public class SearchActivity extends AppCompatActivity {
             if (array != null){
                 for (int i = 0; i < array.length(); i++){
                     try {
-                        sendMessage(Integer.toString(i));
                         json = array.getJSONObject(i);
                         symbol = json.getString("symbol");
                         name = json.getString("name");
@@ -270,5 +215,70 @@ public class SearchActivity extends AppCompatActivity {
             }
 
         }
+    }
+
+    class HandleAsynkTask extends Handler{
+        @Override
+        public void handleMessage(Message msg){
+
+            String str = msg.getData().getString("myKey");
+            if (str != null){
+                if(str.compareTo("BAD") == 0){
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+                Toast.makeText(SearchActivity.this, str , Toast.LENGTH_SHORT).show();
+            }
+
+            if(msg.getData().getString("SEARCH_DONE") != null){
+                progressBar.setVisibility(View.INVISIBLE);
+
+                if (data.size() != 0){
+                    recyclerAdapter = new RecyclerAdapter(SearchActivity.this, data);
+                    recyclerView.setAdapter(recyclerAdapter);
+                }
+                else
+                    Toast.makeText(SearchActivity.this, "No result found", Toast.LENGTH_LONG).show();
+            }
+        }
+
+    }
+
+    private void setToolbar(){
+        toolbar = (Toolbar)findViewById(R.id.search_app_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent openMainActivity = new Intent(SearchActivity.this, MainActivity.class);
+                openMainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(openMainActivity);
+            }
+        });
+    }
+
+    private void setSearchView(){
+
+        searchView = (SearchView) findViewById(R.id.search_space_activity);
+        searchView.setQuery(query, true);
+        searchView.setIconified(false);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                progressBar.setVisibility(View.VISIBLE);
+                data.clear();
+                Search search = new Search();
+                search.execute(query);
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
     }
 }

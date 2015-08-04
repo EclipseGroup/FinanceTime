@@ -128,14 +128,21 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
     }
 
     @Override
-    public void serviceSuccess(Quote quote) {
+    public void serviceSuccess(Quote quote){
 
         current = Index.setNewIndex(quote.getSymbol(), quote.getName(), quote.getOpen(),
                 quote.getLastTrade(), quote.getDaysLow(), quote.getDaysHigh());
         data.add(current);
-        // Toast.makeText(getActivity(), "CIAO " + Integer.toString(conta)+ quote.getSymbol() + quote.getName() , Toast.LENGTH_SHORT).show();
+
         if (data.size() == symbols.size()) {
-            recyclerAdapter = new RecyclerAdapter(getActivity(), data, pageType, fragmentType);
+            while((recyclerAdapter = new RecyclerAdapter(getActivity(), data, pageType, fragmentType)) == null){
+                try {
+                    wait(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
             recyclerView.setAdapter(recyclerAdapter);
             recyclerAdapter.setOnItemRemoved(symbols);
 
