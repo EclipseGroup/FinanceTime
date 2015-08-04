@@ -34,8 +34,6 @@ public class YahooFinanceService {
 
                 String symbol = strings[0];
 
-
-
                 Quote quote= loadCache(symbol);
 
                 if (quote != null) {

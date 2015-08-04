@@ -13,6 +13,7 @@ public class Index {
     public String growth;
     public String percent_growth;
     public Integer color;
+    public String centralName;
 
     public Index(String firstName, String secondName, String dailyOpen,
                  String currentValue, String min, String max){
@@ -25,6 +26,19 @@ public class Index {
         this.growth = getGrowth(dailyOpen, currentValue);
         this.percent_growth = getPercentGrowth(this.growth, dailyOpen);
 
+    }
+
+    public Index (String firstName, String secondName, String centralName){
+        this.firstName = firstName;
+        this.secondName = secondName;
+        this.centralName = centralName;
+        this.dailyOpen = "";
+        this.value = "";
+        this.min = "";
+        this.max = "";
+        this.growth = "";
+        this.percent_growth = "";
+        this.color = 0;
     }
 
     public static Index setNewIndex(String firstName, String secondName, String dailyOpen,

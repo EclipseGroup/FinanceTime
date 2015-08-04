@@ -36,7 +36,6 @@ public class GraphicActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(graph_data.getName().toUpperCase());
 
-        toolbar.setNavigationIcon(drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 
             @Override

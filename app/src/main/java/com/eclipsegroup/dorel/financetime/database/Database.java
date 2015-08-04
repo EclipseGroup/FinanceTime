@@ -102,7 +102,6 @@ public class Database{
         return list;
     }
 
-
     public void deleteFavorite(String symbol){
         String[] whereArgs = {symbol};
         db.delete(DatabaseHelper.FAVORITE_TABLE, DatabaseHelper.SYMBOL + "=?", whereArgs);

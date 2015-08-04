@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -36,6 +37,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     private Integer fragmentType;
     private ArrayList<String> symbols;
 
+    public RecyclerAdapter(Context context, List<Index> data){
+        this.context = context;
+        inflater = LayoutInflater.from(context);
+        this.data = data;
+        dbHelper = new DatabaseHelper(context);
+        db = new Database(dbHelper);
+        fragmentType = 2;
+        pageType = 0;
+    }
 
     public RecyclerAdapter(Context context, List<Index> data, Integer pageType, Integer fragmentType){
         this.context = context;
@@ -73,12 +83,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
             holder.star.setImageResource(R.drawable.ic_star_outline_grey600_36dp);
         }
 
+
         holder.firstName.setText(current.firstName);
         holder.secondName.setText(current.secondName);
+
         holder.currentValue.setText(current.value);
-        holder.max.setText("Max " + current.max);
-        holder.min.setText("Min  " + current.min);
+        holder.max.setText(current.max);
+        holder.min.setText(current.min);
         holder.growth.setText(current.growth);
+        if(fragmentType == 2)
+            holder.centralName.setText(current.centralName);
 
         holder.percent_growth.setText(current.percent_growth);
         if (current.color == 0){
@@ -116,7 +130,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
                 symbols.addAll(list);
         }
     }
-
 
     class RecyclerViewHolder extends RecyclerView.ViewHolder{
 

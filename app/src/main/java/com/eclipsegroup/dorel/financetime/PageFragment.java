@@ -38,8 +38,7 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
 
     private RecyclerView recyclerView;
     private RecyclerAdapter recyclerAdapter;
-    private TextView textView;
-    private Integer pageType; /* Type of tab pressed */
+    private Integer pageType;
     private Integer fragmentType;
     private Context context;
     private ProgressBar progressBar;
@@ -53,10 +52,23 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
     private YahooFinanceService service;
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        super.onSaveInstanceState(savedInstanceState);
+
+        savedInstanceState.putInt("pageType", pageType);
+        savedInstanceState.putInt("fragmentType", fragmentType);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        dbHelper = new DatabaseHelper(context);
+        if (savedInstanceState != null){
+            pageType = savedInstanceState.getInt("pageType");
+            fragmentType = savedInstanceState.getInt("fragmentType");
+        }
+
+        dbHelper = new DatabaseHelper(getActivity());
         db = new Database(dbHelper);
         symbols = db.getListType(pageType, fragmentType);
         service = new YahooFinanceService(this, getActivity());
@@ -72,9 +84,6 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
                              @Nullable Bundle savedInstanceState) {
 
         View layout;
-
-        if (pageType == null) /* TODO: BETTER CONTROL */
-            pageType = 1;
 
         layout = inflater.inflate(R.layout.fragment_page, container, false);
 

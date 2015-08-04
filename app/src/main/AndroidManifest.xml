@@ -3,6 +3,7 @@
     package="com.eclipsegroup.dorel.financetime" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -20,6 +21,10 @@
         <activity
             android:name=".GraphicActivity"
             android:label="@string/title_activity_graphic" >
+        </activity>
+        <activity
+            android:name=".SearchActivity"
+            android:label="@string/title_activity_search" >
         </activity>
     </application>
 

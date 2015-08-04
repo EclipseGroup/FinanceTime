@@ -37,5 +37,9 @@
 
     <string name="start_period">FROM</string>
     <string name="end_period">TO</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="action_search">search</string>
+
+    <string name="query_hint">Search stocks</string>
 
 </resources>
