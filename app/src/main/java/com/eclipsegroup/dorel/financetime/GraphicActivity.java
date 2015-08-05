@@ -1,6 +1,7 @@
 package com.eclipsegroup.dorel.financetime;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eclipsegroup.dorel.financetime.models.Graph;
+import com.eclipsegroup.dorel.financetime.models.GraphElement;
 import com.eclipsegroup.dorel.financetime.models.Index;
 import com.jjoe64.graphview.GraphView;
 
@@ -50,15 +52,15 @@ public class GraphicActivity extends AppCompatActivity {
     private SearchView searchView;
     private static final Random RANDOM = new Random();
     private LineGraphSeries<DataPoint> series;
-    private ArrayList<Index> data = new ArrayList<>();
+    private ArrayList<GraphElement> data = new ArrayList<>();
     private HandleAsynkTask handler;
     private TextView startDate;
-
 
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
     private RecyclerAdapter recyclerAdapter;
     private Exception error;
+    private String symbol;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,16 +69,20 @@ public class GraphicActivity extends AppCompatActivity {
 
         handler = new HandleAsynkTask();
 
-
-        graph_data = new Graph(getIntent().getExtras().getString("INDEX_SYMBOL"));
+        symbol = getIntent().getExtras().getString("INDEX_SYMBOL");
 
         Search search = new Search();
-        search.execute(graph_data.getName(), /*graph_data.getStartPeriod(),graph_data.getEndPeriod()*/"2014-07-01", "2015-07-10");
+        search.execute(symbol, "2014-07-01", "2015-07-10");
+
+        progressBar = (ProgressBar) findViewById(R.id.progress_graphic);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.primaryColor),
+                PorterDuff.Mode.SRC_IN);
+        progressBar.setVisibility(View.VISIBLE);
 
         toolbar = (Toolbar) findViewById(id.graphic_bar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(graph_data.getName().toUpperCase());
+        getSupportActionBar().setTitle(symbol.toUpperCase());
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 
@@ -131,16 +137,20 @@ public class GraphicActivity extends AppCompatActivity {
                 return null;
             }
 
-            String symbol, close, date;
+            String volume, close, date, open, min, max;
 
             if (array != null){
                 for (int i = 0; i < array.length(); i++){
                     try {
                         json = array.getJSONObject(i);
-                        symbol = json.getString("Symbol");
-                        close = json.getString("Close");
                         date = json.getString("Date");
-                        data.add(new Index(close, symbol,date));
+                        close = json.getString("Close");
+                        open = json.getString("Open");
+                        min = json.getString("Low");
+                        max = json.getString("High");
+                        volume = json.getString("Volume");
+
+                        data.add(new GraphElement(date, open, close, min, max, volume));
                     } catch (JSONException e) {
                         return null;
                     }
@@ -199,26 +209,26 @@ public class GraphicActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg){
 
+            int i;
+
             String str = msg.getData().getString("myKey");
-            /*if (str != null){
+            if (str != null){
                 if(str.compareTo("BAD") == 0){
                     progressBar.setVisibility(View.INVISIBLE);
+                    Toast.makeText(GraphicActivity.this, str, Toast.LENGTH_SHORT).show();
                 }
+            }
 
-            }*/
-            int i;
-            Toast.makeText(GraphicActivity.this, str, Toast.LENGTH_SHORT).show();
-          //Toast.makeText(GraphicActivity.this, data.get(i).secondName, Toast.LENGTH_SHORT).show();
 
             if(msg.getData().getString("SEARCH_DONE") != null){
-                //progressBar.setVisibility(View.INVISIBLE);
+                progressBar.setVisibility(View.INVISIBLE);
 
                 GraphView graph = (GraphView) findViewById(id.graphic_layout);
 
                 DataPoint[] dp = new DataPoint[data.size()];
                 String prova;
                 for(i = 0; i < data.size(); i++) {
-                    prova = data.get(i).secondName;
+                    prova = data.get(i).open;
                     if (prova != null)
                         dp[i] = (new DataPoint(i, Double.parseDouble(prova)));
                 }
@@ -228,12 +238,6 @@ public class GraphicActivity extends AppCompatActivity {
                 graph.addSeries(series2);
                 series2.setTitle("bar");
 
-               /* if (data.size() != 0){
-                    recyclerAdapter = new RecyclerAdapter(GraphicActivity.this, data);
-                    recyclerView.setAdapter(recyclerAdapter);
-                }
-                else
-                    Toast.makeText(GraphicActivity.this, "No result found", Toast.LENGTH_LONG).show();*/
             }
         }
 
