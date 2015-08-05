@@ -40,7 +40,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="false"
-        android:text="35 feb 2015   "
+        android:text=""
         android:textColor="@color/primary_text_color"
         android:textSize="20sp"
         android:layout_marginLeft="16dp"/>
@@ -65,7 +65,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="false"
         android:layout_alignParentRight="true"
-        android:text="35 feb 2015   "
+        android:text=""
         android:textColor="@color/primary_text_color"
         android:textSize="20sp"
         android:layout_marginRight="16dp"/>

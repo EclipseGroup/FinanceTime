@@ -40,8 +40,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.Format;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
+import java.util.TimeZone;
 
 import static com.eclipsegroup.dorel.financetime.R.*;
 
@@ -55,6 +64,9 @@ public class GraphicActivity extends AppCompatActivity {
     private ArrayList<GraphElement> data = new ArrayList<>();
     private HandleAsynkTask handler;
     private TextView startDate;
+    private TextView endDate;
+    private String strStartDate;
+    private String strEndDate;
 
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
@@ -68,16 +80,32 @@ public class GraphicActivity extends AppCompatActivity {
         setContentView(layout.activity_graphic);
 
         handler = new HandleAsynkTask();
-
         symbol = getIntent().getExtras().getString("INDEX_SYMBOL");
 
-        Search search = new Search();
-        search.execute(symbol, "2014-07-01", "2015-07-10");
+        startDate = (TextView) findViewById(R.id.start_date);
+        endDate = (TextView) findViewById(R.id.end_date);
+
+        Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+
+        Date todayDate = calendar.getTime();
+        calendar.add(Calendar.DAY_OF_MONTH, -20);
+        Date firstDate = calendar.getTime();
+
+        strStartDate = formatter.format(firstDate);
+        strEndDate = formatter.format(todayDate);
+
+        endDate.setText(strEndDate);
+        startDate.setText(strStartDate);
+
 
         progressBar = (ProgressBar) findViewById(R.id.progress_graphic);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.primaryColor),
                 PorterDuff.Mode.SRC_IN);
         progressBar.setVisibility(View.VISIBLE);
+
+        Search search = new Search();
+        search.execute(symbol, strStartDate, strEndDate);
 
         toolbar = (Toolbar) findViewById(id.graphic_bar);
         setSupportActionBar(toolbar);
