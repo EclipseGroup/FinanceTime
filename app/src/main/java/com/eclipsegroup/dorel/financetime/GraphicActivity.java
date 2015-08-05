@@ -35,6 +35,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Random;
@@ -54,6 +55,7 @@ public class GraphicActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
     private RecyclerAdapter recyclerAdapter;
+    private Exception error;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +68,7 @@ public class GraphicActivity extends AppCompatActivity {
         graph_data = new Graph(getIntent().getExtras().getString("INDEX_SYMBOL"));
 
         Search search = new Search();
-        search.execute(graph_data.getName(), /*graph_data.getStartPeriod(),graph_data.getEndPeriod()*/"2014-07-01", "2014-07-10");
+        search.execute(graph_data.getName(), /*graph_data.getStartPeriod(),graph_data.getEndPeriod()*/"2014-07-01", "2015-07-10");
 
         toolbar = (Toolbar) findViewById(id.graphic_bar);
         setSupportActionBar(toolbar);
@@ -157,64 +159,37 @@ public class GraphicActivity extends AppCompatActivity {
 
         InputStream in = null;
 
-        public JSONParser(){
+        public JSONParser() {
         }
 
-        public  JSONObject getJsonFromQuery(String symbol, String dateStart, String dateEnd) {
+
+        public JSONObject getJsonFromQuery(String symbol, String dateStart, String dateEnd) {
 
 
             String YQL = "select * from yahoo.finance.historicaldata where symbol = \"" + symbol + "\" and startDate = \"" + dateStart + "\" and endDate = \"" + dateEnd + "\"";
             String request = String.format("https://query.yahooapis.com/v1/public/yql?q=%s&format=json&env=store://datatables.org/alltableswithkeys&callback=", Uri.encode(YQL));
-
-            URL url;
             try {
-                url = new URL(request);
-            }
-            catch (MalformedURLException e) {
-                return null;
-            }
+                URL url = new URL(request);
 
-            HttpURLConnection urlConnection;
-            try {
-                urlConnection = (HttpURLConnection) url.openConnection();
-            }
-            catch (IOException e) {
-                return null;
-            }
+                URLConnection connection = url.openConnection();
+                connection.setUseCaches(false);
 
-            try {
-                in = new BufferedInputStream(urlConnection.getInputStream());
-                urlConnection.disconnect();
+                InputStream inputStream = connection.getInputStream();
 
-            } catch (IOException e) {
-                urlConnection.disconnect();
-                return null;
-            }
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder result = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    result.append(line);
+                }
 
-            BufferedReader streamReader;
-            try {
-                streamReader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                return null;
-            }
-            StringBuilder responseStrBuilder = new StringBuilder();
-
-
-            String inputStr;
-            try {
-                while ((inputStr = streamReader.readLine()) != null)
-                    responseStrBuilder.append(inputStr);
-            } catch (IOException e) {
-                return null;
-            }
-
-            try {
-                String string = responseStrBuilder.toString();
+                String string = result.toString();
                 return new JSONObject(string);
-            } catch (JSONException e) {
+
+            } catch (Exception e) {
+                error = e;
                 return null;
             }
-
         }
     }
 
