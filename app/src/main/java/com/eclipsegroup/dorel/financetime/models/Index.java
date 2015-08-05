@@ -1,7 +1,5 @@
 package com.eclipsegroup.dorel.financetime.models;
 
-import com.eclipsegroup.dorel.financetime.R;
-
 public class Index {
 
     public String firstName;

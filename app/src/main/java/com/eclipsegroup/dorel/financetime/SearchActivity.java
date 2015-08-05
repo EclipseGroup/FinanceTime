@@ -36,6 +36,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
@@ -49,6 +50,7 @@ public class SearchActivity extends AppCompatActivity {
     private RecyclerAdapter recyclerAdapter;
     private ArrayList<Index> data = new ArrayList<>();
     private HandleAsynkTask handler;
+    private Exception error;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,51 +165,24 @@ public class SearchActivity extends AppCompatActivity {
             URL url;
             try {
                 url = new URL(request);
-            }
-            catch (MalformedURLException e) {
-                return null;
-            }
 
-            HttpURLConnection urlConnection;
-            try {
-                urlConnection = (HttpURLConnection) url.openConnection();
-            }
-            catch (IOException e) {
-                return null;
-            }
-
-            try {
+                URLConnection urlConnection = url.openConnection();
                 in = new BufferedInputStream(urlConnection.getInputStream());
-                urlConnection.disconnect();
 
-            } catch (IOException e) {
-                urlConnection.disconnect();
-                return null;
-            }
+                BufferedReader streamReader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder responseStrBuilder = new StringBuilder();
 
-            BufferedReader streamReader;
-            try {
-                streamReader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                return null;
-            }
-            StringBuilder responseStrBuilder = new StringBuilder();
-
-
-            String inputStr;
-            try {
+                String inputStr;
                 while ((inputStr = streamReader.readLine()) != null)
                     responseStrBuilder.append(inputStr);
-            } catch (IOException e) {
-                return null;
-            }
 
-            try {
                 String string = responseStrBuilder.toString();
                 Integer end = string.length() - 1;
                 string = string.substring(39, end);
                 return new JSONObject(string);
-            } catch (JSONException e) {
+
+            }catch (Exception e) {
+                error = e;
                 return null;
             }
 

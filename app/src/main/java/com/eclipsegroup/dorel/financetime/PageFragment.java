@@ -75,7 +75,7 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
         service = new YahooFinanceService(this, getActivity());
 
         if (symbols.size()!= 0 && data.isEmpty())
-            for (Integer i = 0; i < symbols.size(); i++) {
+            for (Integer i = 0; i < symbols.size(); i++) { /*TODO: set new download */
                 service.refreshQuote(symbols.get(i));
             }
     }
@@ -114,11 +114,6 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
         return layout;
     }
 
-    public List<Index> getData() {
-
-        return data;
-    }
-
     public static PageFragment getInstance(int position, int fragmentType, Context context) {
 
         PageFragment pageFragment = new PageFragment();
@@ -136,7 +131,7 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
                 quote.getLastTrade(), quote.getDaysLow(), quote.getDaysHigh());
         data.add(current);
 
-        if (data.size() == symbols.size()) {
+        if (data.size() == symbols.size()) { /* TODO: copy all what is in here in the handle message */
             while((recyclerAdapter = new RecyclerAdapter(getActivity(), data, pageType, fragmentType)) == null){
                 try {
                     wait(100);
@@ -169,7 +164,7 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
         public void onRefresh() {
                 if(data.size() == symbols.size() && symbols.size() != 0){
                     data.clear();
-                    for (Integer i = 0; i < symbols.size(); i++) {
+                    for (Integer i = 0; i < symbols.size(); i++) { /* TODO: set new download */
                         service.refreshQuote(symbols.get(i));
                     }
                 }

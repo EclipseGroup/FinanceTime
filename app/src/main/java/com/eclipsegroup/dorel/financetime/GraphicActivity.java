@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eclipsegroup.dorel.financetime.models.Graph;
@@ -51,6 +52,8 @@ public class GraphicActivity extends AppCompatActivity {
     private LineGraphSeries<DataPoint> series;
     private ArrayList<Index> data = new ArrayList<>();
     private HandleAsynkTask handler;
+    private TextView startDate;
+
 
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
@@ -147,6 +150,7 @@ public class GraphicActivity extends AppCompatActivity {
 
             return "";
         }
+
         @Override
         protected void onPostExecute(String result){
 
@@ -156,8 +160,6 @@ public class GraphicActivity extends AppCompatActivity {
     }
 
     class JSONParser {
-
-        InputStream in = null;
 
         public JSONParser() {
         }

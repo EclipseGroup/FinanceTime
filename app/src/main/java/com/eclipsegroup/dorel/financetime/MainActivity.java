@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
         searchView.setIconified(true);
         drawerFragment.closeDrawer();
     }
+
     public void onClickSettings(View view){
 
         toolbar.setTitle(R.string.action_settings);
@@ -136,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
         searchView.setVisibility(View.INVISIBLE);
         drawerFragment.closeDrawer();
     }
+
     public void onClickAbout(View view){
 
         toolbar.setTitle(R.string.about);
