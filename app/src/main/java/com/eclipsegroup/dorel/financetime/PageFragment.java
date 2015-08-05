@@ -1,29 +1,49 @@
 package com.eclipsegroup.dorel.financetime;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eclipsegroup.dorel.financetime.database.Database;
 import com.eclipsegroup.dorel.financetime.database.DatabaseHelper;
+import com.eclipsegroup.dorel.financetime.models.GraphElement;
 import com.eclipsegroup.dorel.financetime.models.Index;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class PageFragment extends Fragment implements FinanceServiceCallback {
+public class PageFragment extends Fragment{
 
     private static final String TAG = PageFragment.class.getSimpleName();
 
@@ -46,6 +66,8 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
     private Database db;
     private ArrayList<String> symbols = new ArrayList<String>();
     private SwipeRefreshLayout swipe;
+    private HandleAsynkTask handler;
+    private Exception error;
 
     Index current;
     ArrayList<Index> data = new ArrayList<Index>();
@@ -68,16 +90,15 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
             fragmentType = savedInstanceState.getInt("fragmentType");
         }
 
+        handler = new HandleAsynkTask();
+
         dbHelper = new DatabaseHelper(getActivity());
         db = new Database(dbHelper);
         symbols = db.getListType(pageType, fragmentType);
 
-        service = new YahooFinanceService(this, getActivity());
-
-        if (symbols.size()!= 0 && data.isEmpty())
-            for (Integer i = 0; i < symbols.size(); i++) { /*TODO: set new download */
-                service.refreshQuote(symbols.get(i));
-            }
+        if (symbols.size()!= 0 && data.isEmpty()){
+            Search search = new Search();
+            search.execute();}
     }
 
     @Override
@@ -114,6 +135,11 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
         return layout;
     }
 
+    public List<Index> getData() {
+
+        return data;
+    }
+
     public static PageFragment getInstance(int position, int fragmentType, Context context) {
 
         PageFragment pageFragment = new PageFragment();
@@ -124,34 +150,148 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
         return pageFragment;
     }
 
-    @Override
-    public void serviceSuccess(Quote quote){
+    private void sendMessage(String string){
+        Message msg = handler.obtainMessage();
+        Bundle bundle = new Bundle();
+        bundle.putString("myKey", string);
+        msg.setData(bundle);
+        handler.sendMessage(msg);
+    }
 
-        current = Index.setNewIndex(quote.getSymbol(), quote.getName(), quote.getOpen(),
-                quote.getLastTrade(), quote.getDaysLow(), quote.getDaysHigh());
-        data.add(current);
+    private void signalSearchDone(){
+        Message msg = handler.obtainMessage();
+        Bundle bundle = new Bundle();
+        bundle.putString("SEARCH_DONE", "");
+        msg.setData(bundle);
+        handler.sendMessage(msg);
 
-        if (data.size() == symbols.size()) { /* TODO: copy all what is in here in the handle message */
-            while((recyclerAdapter = new RecyclerAdapter(getActivity(), data, pageType, fragmentType)) == null){
-                try {
-                    wait(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+    }
+
+    class Search extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... queries) {
+
+            JSONParser jsonParser = new JSONParser();
+            JSONObject json = jsonParser.getJsonFromQuery();
+
+            try {
+                if (json != null){
+                    json = json.getJSONObject("query").getJSONObject("results");
                 }
+                else return null;
+
+            } catch (JSONException e) {
+                return null;
             }
 
-            recyclerView.setAdapter(recyclerAdapter);
-            recyclerAdapter.setOnItemRemoved(symbols);
+            JSONArray array;
+            try {
+                array = json.getJSONArray("quote");
+            } catch (JSONException e) {
+                return null;
+            }
 
-            progressBar.setVisibility(View.INVISIBLE);
-            swipe.setRefreshing(false);
+            String symbol, name, open, price, min, max;
+
+            if (array != null){
+                for (int i = 0; i < array.length(); i++){
+                    try {
+                        json = array.getJSONObject(i);
+                        symbol = json.getString("symbol");
+                        name = json.getString("Name");
+                        open = json.getString("Open");
+                        price = json.getString("LastTradePriceOnly");
+                        min = json.getString("DaysLow");
+                        max = json.getString("DaysHigh");
+
+                        data.add(new Index(symbol, name, open, price, min, max));
+                    } catch (JSONException e) {
+                        return null;
+                    }
+                }
+                signalSearchDone();
+            }
+
+            return "";
+        }
+        @Override
+        protected void onPostExecute(String result){
+
+            if (result == null)
+                sendMessage("BAD");
         }
     }
 
-    @Override
-    public void serviceFailure(Exception exception) {
+    class JSONParser {
 
-        Toast.makeText(getActivity(), exception.getMessage(), Toast.LENGTH_LONG).show();
+        InputStream in = null;
+
+        public JSONParser(){
+        }
+
+        public  JSONObject getJsonFromQuery() {
+
+
+
+            String YQL = "select * from yahoo.finance.quotes where symbol in (";
+            for(int i = 0; i < symbols.size(); i++){
+            YQL += String.format("\"%s\",",symbols.get(i));
+            }
+            YQL = YQL.substring(0,YQL.length()-1);
+            YQL += ")";
+            String request = String.format("https://query.yahooapis.com/v1/public/yql?q=%s&format=json&env=store://datatables.org/alltableswithkeys&callback=", Uri.encode(YQL));
+
+            URL url;
+            try {
+                url = new URL(request);
+
+                URLConnection urlConnection = url.openConnection();
+                in = new BufferedInputStream(urlConnection.getInputStream());
+
+                BufferedReader streamReader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder responseStrBuilder = new StringBuilder();
+
+                String inputStr;
+                while ((inputStr = streamReader.readLine()) != null)
+                    responseStrBuilder.append(inputStr);
+
+                String string = responseStrBuilder.toString();
+
+                return new JSONObject(string);
+
+            }catch (Exception e) {
+                error = e;
+                return null;
+            }
+
+        }
+    }
+
+    class HandleAsynkTask extends Handler {
+        @Override
+        public void handleMessage(Message msg){
+
+            String str = msg.getData().getString("myKey");
+            if (str != null){
+                if(str.compareTo("BAD") == 0){
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+                Toast.makeText(getActivity(), str , Toast.LENGTH_SHORT).show();
+            }
+
+            if(msg.getData().getString("SEARCH_DONE") != null){
+                progressBar.setVisibility(View.INVISIBLE);
+
+                if (data.size() != 0){
+                    recyclerAdapter = new RecyclerAdapter(getActivity(), data);
+                    recyclerView.setAdapter(recyclerAdapter);
+                }
+                else
+                    Toast.makeText(getActivity(), "No result found", Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
 
     class OnRefresh implements SwipeRefreshLayout.OnRefreshListener {
@@ -164,7 +304,7 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
         public void onRefresh() {
                 if(data.size() == symbols.size() && symbols.size() != 0){
                     data.clear();
-                    for (Integer i = 0; i < symbols.size(); i++) { /* TODO: set new download */
+                    for (Integer i = 0; i < symbols.size(); i++) {
                         service.refreshQuote(symbols.get(i));
                     }
                 }
