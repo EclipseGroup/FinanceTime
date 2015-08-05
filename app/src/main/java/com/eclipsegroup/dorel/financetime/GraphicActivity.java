@@ -21,6 +21,7 @@ import com.eclipsegroup.dorel.financetime.models.GraphElement;
 import com.eclipsegroup.dorel.financetime.models.Index;
 import com.jjoe64.graphview.GraphView;
 
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -44,6 +45,7 @@ import java.sql.Time;
 import java.text.DateFormat;
 import java.text.FieldPosition;
 import java.text.Format;
+import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -232,12 +234,20 @@ public class GraphicActivity extends AppCompatActivity {
             }
         }
     }
+    private Date stringToDate(String aDate,String aFormat) {
 
+        if(aDate==null) return null;
+        ParsePosition pos = new ParsePosition(0);
+        SimpleDateFormat simpledateformat = new SimpleDateFormat(aFormat);
+        Date stringDate = simpledateformat.parse(aDate, pos);
+        return stringDate;
+
+    }
     class HandleAsynkTask extends Handler {
         @Override
         public void handleMessage(Message msg){
 
-            int i;
+            int i=0;
 
             String str = msg.getData().getString("myKey");
             if (str != null){
@@ -252,16 +262,36 @@ public class GraphicActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.INVISIBLE);
 
                 GraphView graph = (GraphView) findViewById(id.graphic_layout);
-
+                Date date = null;
                 DataPoint[] dp = new DataPoint[data.size()];
-                String prova;
+                String open,strdate;
+                String dtStart = "2010-10-15T09:27:37Z";
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+                long d;
+                Calendar calendar = Calendar.getInstance();
+                Date d1 = calendar.getTime();
+                Toast.makeText(getApplicationContext(),calendar.toString()+"calendar",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),d1.toString()+"d1",Toast.LENGTH_LONG).show();
                 for(i = 0; i < data.size(); i++) {
-                    prova = data.get(i).open;
-                    if (prova != null)
-                        dp[i] = (new DataPoint(i, Double.parseDouble(prova)));
+                    open = data.get(i).open;
+                    strdate = data.get(i).date;
+                    Toast.makeText(getApplicationContext(),strdate+"strdate",Toast.LENGTH_LONG).show();
+                    //date = stringToDate(strdate,"yyyy-MM-dd");
+                    d=date.getTime();
+                    try {
+                        date = format.parse(strdate);
+                    } catch (ParseException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(getApplicationContext(),date.toString()+"date",Toast.LENGTH_LONG).show();
+                    if (open != null) dp[i] = (new DataPoint(d, Double.parseDouble(open)));
                 }
 
                 LineGraphSeries<DataPoint> series2 = new LineGraphSeries<DataPoint>(dp);
+                graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(GraphicActivity.this));
+                graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
                 if(series2 != null)
                 graph.addSeries(series2);
                 series2.setTitle("bar");
