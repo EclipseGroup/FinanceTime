@@ -28,10 +28,10 @@ public class Index {
 
     }
 
-    public Index (String firstName, String secondName, String centralName){
-        this.firstName = firstName;
-        this.secondName = secondName;
-        this.centralName = centralName;
+    public Index(String close, String symbol, String date){
+        this.firstName = date;
+        this.secondName = close;
+        this.centralName = symbol;
         this.dailyOpen = "";
         this.value = "";
         this.min = "";

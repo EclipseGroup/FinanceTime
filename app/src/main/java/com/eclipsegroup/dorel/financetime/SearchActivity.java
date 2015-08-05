@@ -90,13 +90,10 @@ public class SearchActivity extends AppCompatActivity {
 
     }
 
-
-
     class Search extends AsyncTask<String, String, String>{
 
         @Override
         protected String doInBackground(String... queries) {
-
 
             JSONParser jsonParser = new JSONParser();
             JSONObject json = jsonParser.getJsonFromQuery(queries[0]);

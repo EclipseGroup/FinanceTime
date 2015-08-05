@@ -6,8 +6,17 @@ import java.util.Date;
 public class Graph {
 
     String symbol;
-    Date endPeriod;
-    Date startPeriod;
+    String endPeriod;
+    String startPeriod;
+
+    public String getEndPeriod() {
+        return endPeriod;
+    }
+
+    public String getStartPeriod() {
+        return startPeriod;
+    }
+
     String resolution;
     Integer graphType;
     ArrayList<Double> values;

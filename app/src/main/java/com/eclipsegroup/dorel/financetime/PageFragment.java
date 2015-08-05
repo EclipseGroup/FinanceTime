@@ -71,6 +71,7 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
         dbHelper = new DatabaseHelper(getActivity());
         db = new Database(dbHelper);
         symbols = db.getListType(pageType, fragmentType);
+
         service = new YahooFinanceService(this, getActivity());
 
         if (symbols.size()!= 0 && data.isEmpty())
@@ -94,10 +95,12 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.primaryColor),
                 PorterDuff.Mode.SRC_IN);
 
+        progressBar.setVisibility(View.INVISIBLE);
 
         swipe.setOnRefreshListener(new OnRefresh());
 
         if (symbols.size() != 0){
+
             if (symbols.size() > data.size())
                 progressBar.setVisibility(View.VISIBLE);
 
@@ -108,7 +111,6 @@ public class PageFragment extends Fragment implements FinanceServiceCallback {
                 recyclerAdapter.setOnItemRemoved(symbols);
             }
         }
-
         return layout;
     }
 
