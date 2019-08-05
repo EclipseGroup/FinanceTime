@@ -19,6 +19,7 @@ public class MainPageFragment extends Fragment {
     private ViewPager mPager;
     private SlidingTabLayout mTabs;
     private FragmentPagerAdapter adapter;
+    private static final Integer MAIN_PAGE = 0;
 
     public MainPageFragment() {
         // Required empty public constructor
@@ -52,7 +53,7 @@ public class MainPageFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            return PageFragment.getInstance(position, 0, getActivity());
+            return PageFragment.getInstance(position, MAIN_PAGE, getActivity());
         }
 
         @Override

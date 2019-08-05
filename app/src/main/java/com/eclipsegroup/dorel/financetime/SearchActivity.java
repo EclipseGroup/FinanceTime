@@ -75,6 +75,11 @@ public class SearchActivity extends AppCompatActivity {
         search.execute(query);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle icicle) {
+        super.onSaveInstanceState(icicle);
+    }
+
     private void sendMessage(String string){
         Message msg = handler.obtainMessage();
         Bundle bundle = new Bundle();

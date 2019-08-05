@@ -1,12 +1,10 @@
 package com.eclipsegroup.dorel.financetime;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
@@ -20,9 +18,6 @@ import com.eclipsegroup.dorel.financetime.main.fragments.MainPageFragment;
 import com.eclipsegroup.dorel.financetime.main.fragments.PortfolioFragment;
 import com.eclipsegroup.dorel.financetime.main.fragments.SettingsFragment;
 import com.eclipsegroup.dorel.financetime.models.IndicesData;
-import com.eclipsegroup.dorel.financetime.tabs.SlidingTabLayout;
-
-import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -82,6 +77,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         searchView.setIconified(true);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle icicle) {
+        super.onSaveInstanceState(icicle);
     }
 
     public void onClickMain(View view){

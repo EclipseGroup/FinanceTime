@@ -106,7 +106,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
 
         holder.pageType = pageType;
 
-        /* Start the graph activity on click */
         holder.cardLayout.setOnClickListener(new CardListner(holder));
         holder.star.setOnClickListener(new StarListner(holder));
 
@@ -116,7 +115,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     public int getItemCount() {
         return data.size();
     }
-
 
     public void setOnItemRemoved(ArrayList<String> symbols){
         this.symbols = symbols;
@@ -183,7 +181,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     public class StarListner implements View.OnClickListener{
 
         RecyclerViewHolder holder;
-
                  
         public StarListner(RecyclerViewHolder holder){
             this.holder = holder;

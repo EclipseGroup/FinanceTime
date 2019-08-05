@@ -1,30 +1,25 @@
 package com.eclipsegroup.dorel.financetime;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eclipsegroup.dorel.financetime.database.Database;
 import com.eclipsegroup.dorel.financetime.database.DatabaseHelper;
-import com.eclipsegroup.dorel.financetime.models.GraphElement;
 import com.eclipsegroup.dorel.financetime.models.Index;
 
 import org.json.JSONArray;
@@ -35,10 +30,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,10 +61,7 @@ public class PageFragment extends Fragment{
     private SwipeRefreshLayout swipe;
     private HandleAsynkTask handler;
     private Exception error;
-
-    Index current;
-    ArrayList<Index> data = new ArrayList<Index>();
-    private YahooFinanceService service;
+    private ArrayList<Index> data = new ArrayList<Index>();
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState){
@@ -98,7 +88,8 @@ public class PageFragment extends Fragment{
 
         if (symbols.size()!= 0 && data.isEmpty()){
             Search search = new Search();
-            search.execute();}
+            search.execute();
+        }
     }
 
     @Override
@@ -133,11 +124,6 @@ public class PageFragment extends Fragment{
             }
         }
         return layout;
-    }
-
-    public List<Index> getData() {
-
-        return data;
     }
 
     public static PageFragment getInstance(int position, int fragmentType, Context context) {
@@ -232,11 +218,9 @@ public class PageFragment extends Fragment{
 
         public  JSONObject getJsonFromQuery() {
 
-
-
             String YQL = "select * from yahoo.finance.quotes where symbol in (";
             for(int i = 0; i < symbols.size(); i++){
-            YQL += String.format("\"%s\",",symbols.get(i));
+                YQL += String.format("\"%s\",",symbols.get(i));
             }
             YQL = YQL.substring(0,YQL.length()-1);
             YQL += ")";
@@ -282,6 +266,7 @@ public class PageFragment extends Fragment{
 
             if(msg.getData().getString("SEARCH_DONE") != null){
                 progressBar.setVisibility(View.INVISIBLE);
+                swipe.setRefreshing(false);
 
                 if (data.size() != 0){
                     recyclerAdapter = new RecyclerAdapter(getActivity(), data);
@@ -297,16 +282,14 @@ public class PageFragment extends Fragment{
     class OnRefresh implements SwipeRefreshLayout.OnRefreshListener {
 
         public OnRefresh(){
-
         }
 
         @Override
         public void onRefresh() {
                 if(data.size() == symbols.size() && symbols.size() != 0){
                     data.clear();
-                    for (Integer i = 0; i < symbols.size(); i++) {
-                        service.refreshQuote(symbols.get(i));
-                    }
+                    Search search = new Search();
+                    search.execute();
                 }
             else
                 swipe.setRefreshing(false);
