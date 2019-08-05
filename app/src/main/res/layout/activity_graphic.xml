@@ -15,12 +15,21 @@
     <!-- Frame of all fragments -->
     <com.jjoe64.graphview.GraphView
 
-        android:id="@+id/graphic_layout"
+        android:id="@+id/open_graphic_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/graphic_bar"
+        android:background="@color/accent_material_dark"
+        android:layout_alignBottom="@+id/progress_graphic" />
+
+    <com.jjoe64.graphview.GraphView
+
+        android:id="@+id/volume_graphic_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/indices_star"
-        android:layout_below="@+id/graphic_bar"
-        android:background="@color/accent_material_dark"/>
+        android:background="@color/accent_material_dark"
+        android:layout_below="@+id/progress_graphic" />
 
     <TextView
         android:id="@+id/header_start_date"
@@ -45,7 +54,8 @@
         android:text=""
         android:textColor="@color/primary_text_color"
         android:textSize="20sp"
-        android:layout_marginLeft="16dp"/>
+        android:layout_marginLeft="16dp"
+        android:clickable="true" />
 
     <TextView
         android:id="@+id/header_end_date"
@@ -70,7 +80,8 @@
         android:text=""
         android:textColor="@color/primary_text_color"
         android:textSize="20sp"
-        android:layout_marginRight="16dp"/>
+        android:layout_marginRight="16dp"
+        android:clickable="true" />
 
 
     <ImageButton

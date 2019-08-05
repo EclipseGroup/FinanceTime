@@ -18,45 +18,36 @@ import android.widget.Toast;
 
 import com.eclipsegroup.dorel.financetime.models.Graph;
 import com.eclipsegroup.dorel.financetime.models.GraphElement;
-import com.eclipsegroup.dorel.financetime.models.Index;
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
-
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLEncoder;
-import java.sql.Time;
-import java.text.DateFormat;
-import java.text.FieldPosition;
-import java.text.Format;
 import java.text.ParseException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
-import java.util.TimeZone;
 
-import static com.eclipsegroup.dorel.financetime.R.*;
+import static com.eclipsegroup.dorel.financetime.R.id;
+import static com.eclipsegroup.dorel.financetime.R.layout;
 
-public class GraphicActivity extends AppCompatActivity {
+public class GraphicActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     private Toolbar toolbar;
     private Graph graph_data;
@@ -65,10 +56,13 @@ public class GraphicActivity extends AppCompatActivity {
     private LineGraphSeries<DataPoint> series;
     private ArrayList<GraphElement> data = new ArrayList<>();
     private HandleAsynkTask handler;
-    private TextView startDate;
-    private TextView endDate;
+    private TextView startDateView;
+    private TextView endDateView;
     private String strStartDate;
     private String strEndDate;
+    private SimpleDateFormat formatter;
+    private GraphView open_graph;
+    private GraphView volume_graph;
 
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
@@ -84,10 +78,12 @@ public class GraphicActivity extends AppCompatActivity {
         handler = new HandleAsynkTask();
         symbol = getIntent().getExtras().getString("INDEX_SYMBOL");
 
-        startDate = (TextView) findViewById(R.id.start_date);
-        endDate = (TextView) findViewById(R.id.end_date);
+        open_graph = (GraphView) findViewById(id.open_graphic_layout);
+        volume_graph = (GraphView) findViewById(id.volume_graphic_layout);
+        startDateView = (TextView) findViewById(R.id.start_date);
+        endDateView = (TextView) findViewById(R.id.end_date);
 
-        Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+        formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         Calendar calendar = Calendar.getInstance();
 
         Date todayDate = calendar.getTime();
@@ -97,17 +93,19 @@ public class GraphicActivity extends AppCompatActivity {
         strStartDate = formatter.format(firstDate);
         strEndDate = formatter.format(todayDate);
 
-        endDate.setText(strEndDate);
-        startDate.setText(strStartDate);
+        endDateView.setText(strEndDate);
+        startDateView.setText(strStartDate);
 
+        endDateView.setOnClickListener(new DatePick("endDate"));
+        startDateView.setOnClickListener(new DatePick("startDate"));
 
         progressBar = (ProgressBar) findViewById(R.id.progress_graphic);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.primaryColor),
                 PorterDuff.Mode.SRC_IN);
         progressBar.setVisibility(View.VISIBLE);
 
-        Search search = new Search();
-        search.execute(symbol, strStartDate, strEndDate);
+        Downloader downloader = new Downloader();
+        downloader.execute(symbol, strStartDate, strEndDate);
 
         toolbar = (Toolbar) findViewById(id.graphic_bar);
         setSupportActionBar(toolbar);
@@ -142,19 +140,51 @@ public class GraphicActivity extends AppCompatActivity {
 
     }
 
-    class Search extends AsyncTask<String, String, String> {
+    @Override
+    public void onDateSet(DatePickerDialog datePickerDialog, int i, int i1, int i2) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(i, i1, i2);
+        Date date = null;
+
+        if (datePickerDialog.getTag().compareTo("startDate") == 0) {
+            try {
+                date = formatter.parse(strStartDate);
+                strStartDate = formatter.format(calendar.getTime());
+                startDateView.setText(strStartDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else if (datePickerDialog.getTag().compareTo("endDate") == 0) {
+            try {
+                date = formatter.parse(strEndDate);
+                strEndDate = formatter.format(calendar.getTime());
+                endDateView.setText(strEndDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+        }
+        assert date != null;
+        if (date.compareTo(calendar.getTime()) != 0) {
+            data.clear();
+            progressBar.setVisibility(View.VISIBLE);
+            Downloader downloader = new Downloader();
+            downloader.execute(symbol, strStartDate, strEndDate);
+        }
+    }
+
+    class Downloader extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... queries) {
 
             JSONParser jsonParser = new JSONParser();
-            JSONObject json = jsonParser.getJsonFromQuery(queries[0],queries[1],queries[2]);
+            JSONObject json = jsonParser.getJsonFromQuery(queries[0], queries[1], queries[2]);
 
             try {
-                if (json != null){
+                if (json != null) {
                     json = json.getJSONObject("query").getJSONObject("results");
-                }
-                else return null;
+                } else return null;
 
             } catch (JSONException e) {
                 return null;
@@ -169,8 +199,8 @@ public class GraphicActivity extends AppCompatActivity {
 
             String volume, close, date, open, min, max;
 
-            if (array != null){
-                for (int i = 0; i < array.length(); i++){
+            if (array != null) {
+                for (int i = array.length() - 1; i >= 0; i--) {
                     try {
                         json = array.getJSONObject(i);
                         date = json.getString("Date");
@@ -192,7 +222,7 @@ public class GraphicActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String result){
+        protected void onPostExecute(String result) {
 
             if (result == null)
                 sendMessage("BAD");
@@ -201,12 +231,7 @@ public class GraphicActivity extends AppCompatActivity {
 
     class JSONParser {
 
-        public JSONParser() {
-        }
-
-
         public JSONObject getJsonFromQuery(String symbol, String dateStart, String dateEnd) {
-
 
             String YQL = "select * from yahoo.finance.historicaldata where symbol = \"" + symbol + "\" and startDate = \"" + dateStart + "\" and endDate = \"" + dateEnd + "\"";
             String request = String.format("https://query.yahooapis.com/v1/public/yql?q=%s&format=json&env=store://datatables.org/alltableswithkeys&callback=", Uri.encode(YQL));
@@ -247,96 +272,142 @@ public class GraphicActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg){
 
-            int i=0;
+            int i;
 
             String str = msg.getData().getString("myKey");
-            if (str != null){
-                if(str.compareTo("BAD") == 0){
+            if (str != null) {
+                if (str.compareTo("BAD") == 0) {
                     progressBar.setVisibility(View.INVISIBLE);
                     Toast.makeText(GraphicActivity.this, str, Toast.LENGTH_SHORT).show();
                 }
             }
 
-
-            if(msg.getData().getString("SEARCH_DONE") != null){
+            if (msg.getData().getString("SEARCH_DONE") != null) {
                 progressBar.setVisibility(View.INVISIBLE);
+                open_graph.removeAllSeries();
+                volume_graph.removeAllSeries();
 
-                GraphView graph = (GraphView) findViewById(id.graphic_layout);
+
+                Double min = Double.parseDouble(data.get(0).open);
+                Double max = Double.parseDouble(data.get(0).open);
+                Double volumeMax = (Double.parseDouble(data.get(0).volume)/1000000.0);
+
+                String open, strdate, volume;
                 Date date = null;
                 DataPoint[] dp = new DataPoint[data.size()];
-                String open,strdate;
-                String dtStart = "2010-10-15T09:27:37Z";
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-
-                long d;
+                DataPoint[] volumePoints = new DataPoint[data.size()];
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                long d = 0;
                 Calendar calendar = Calendar.getInstance();
                 Date d1 = calendar.getTime();
-                Toast.makeText(getApplicationContext(),calendar.toString()+"calendar",Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(),d1.toString()+"d1",Toast.LENGTH_LONG).show();
+
                 for(i = 0; i < data.size(); i++) {
                     open = data.get(i).open;
                     strdate = data.get(i).date;
-                    Toast.makeText(getApplicationContext(),strdate+"strdate",Toast.LENGTH_LONG).show();
-                    //date = stringToDate(strdate,"yyyy-MM-dd");
-                    d=date.getTime();
+                    volume = data.get(i).volume;
+
                     try {
                         date = format.parse(strdate);
                     } catch (ParseException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    Toast.makeText(getApplicationContext(),date.toString()+"date",Toast.LENGTH_LONG).show();
-                    if (open != null) dp[i] = (new DataPoint(d, Double.parseDouble(open)));
+                    assert date != null;
+                    d = date.getTime();
+
+                    if (open != null){
+                        volumePoints[i] = (new DataPoint(d, Double.parseDouble(volume)/1000000.0));
+                        dp[i] = (new DataPoint(d, Double.parseDouble(open)));
+                        if (Double.parseDouble(open) > max)
+                            max = Double.parseDouble(open);
+                        if(Double.parseDouble(open) < min)
+                            min = Double.parseDouble(open);
+                        if(Double.parseDouble(volume)/1000000.0 > volumeMax)
+                            volumeMax = Double.parseDouble(volume)/1000000.0;
+                    }
+
                 }
 
-                LineGraphSeries<DataPoint> series2 = new LineGraphSeries<DataPoint>(dp);
-                graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(GraphicActivity.this));
-                graph.getGridLabelRenderer().setNumHorizontalLabels(3); // only 4 because of the space
-                if(series2 != null)
-                graph.addSeries(series2);
+                LineGraphSeries<DataPoint> series2 = new LineGraphSeries<>(dp);
+                BarGraphSeries<DataPoint> volumeSeries = new BarGraphSeries<>(volumePoints);
+
+
+                open_graph.addSeries(series2);
                 series2.setTitle("bar");
 
+
+                open_graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(GraphicActivity.this));
+                open_graph.getGridLabelRenderer().setNumHorizontalLabels(3);
+
+                try {
+                    d = format.parse(data.get(0).date).getTime();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                open_graph.getViewport().setMinX(d);
+                long start = d;
+
+                try {
+                    d = format.parse(data.get(data.size() - 1).date).getTime();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                Toast.makeText(GraphicActivity.this, "Nr. elem: " + Integer.toString(data.size()), Toast.LENGTH_SHORT).show();
+                open_graph.getViewport().setMaxX(d);
+                open_graph.getViewport().setXAxisBoundsManual(true);
+                open_graph.getViewport().setMinY(min * 0.95);
+                open_graph.getViewport().setMaxY(max * 1.05);
+                open_graph.getViewport().setYAxisBoundsManual(true);
+
+                volume_graph.addSeries(volumeSeries);
+                volumeSeries.setTitle("Volume");
+
+                volume_graph.getGridLabelRenderer().setNumHorizontalLabels(3);
+                volume_graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(GraphicActivity.this));
+                volume_graph.getViewport().setMaxX(d);
+                volume_graph.getViewport().setMinX(start);
+                volume_graph.getViewport().setMaxY(volumeMax);
+                volume_graph.getViewport().setYAxisBoundsManual(true);
+                volume_graph.getViewport().setXAxisBoundsManual(true);
             }
         }
 
     }
 
-    private void setToolbar(){
-        toolbar = (Toolbar)findViewById(R.id.search_app_bar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    class DatePick implements View.OnClickListener {
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent openMainActivity = new Intent(GraphicActivity.this, MainActivity.class);
-                openMainActivity.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(openMainActivity);
-            }
-        });
-    }
+        String type;
 
-    private void setSearchView(){
+        public DatePick(String type) {
+            this.type = type;
+        }
 
-        searchView = (SearchView) findViewById(R.id.search_space_activity);
+        @Override
+        public void onClick(View v) {
 
-        searchView.setIconified(false);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                progressBar.setVisibility(View.VISIBLE);
-                data.clear();
-                Search search = new Search();
-                search.execute(query);
-
-                return false;
+            Calendar calendar = Calendar.getInstance();
+            if (type.compareTo("endDate") == 0) {
+                try {
+                    calendar.setTime(formatter.parse(strEndDate));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    calendar.setTime(formatter.parse(strStartDate));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-
+            DatePickerDialog dpd = DatePickerDialog.newInstance(
+                    GraphicActivity.this,
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+            );
+            dpd.show(getFragmentManager(), type);
+        }
     }
 }
